@@ -2,7 +2,7 @@ import os
 import sys
 from typing import List
 
-from cozepy import (
+from cozepy import (  # type: ignore
     AsyncCoze,
     AsyncTokenAuth,
     COZE_CN_BASE_URL,
@@ -13,8 +13,8 @@ from cozepy import (
     Voice,
     User,
 )
-from mcp.server import FastMCP
-from pydantic import BaseModel
+from mcp.server import FastMCP  # type: ignore
+from pydantic import BaseModel  # type: ignore
 
 
 class Config(BaseModel):

@@ -8,6 +8,17 @@ A Model Context Protocol server that provides coze resource and tool.
 - `list_bots` - Get bots list
 - `create_bot` - Create bot
 
+- `get_me`: Get self user info
+- `list_workspaces`: List workspaces
+- `list_bots`: List bots
+- `retrieve_bot`: Retrieve bot info
+- `create_bot`: Create bot
+- `update_bot`: Update bot
+- `publish_bot`: Publish bot to API channel
+- `chat_with_bot`: Chat with bot
+- `chat_with_workflow`: Chat with workflow
+- `list_voices`: List voice
+
 ## Installation
 
 ### Using uv (recommended)
