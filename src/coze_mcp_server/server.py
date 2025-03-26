@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import List
+from typing import List, Optional, Union
 
 from cozepy import (  # type: ignore
     AsyncCoze,
@@ -91,22 +91,22 @@ async def list_workspaces():
 
 
 @mcp.tool(description="list bots in workspaces")
-async def list_bots(workspace_id: int | str):
+async def list_bots(workspace_id: Union[int, str]):
     res = await server.coze.bots.list(space_id=str(workspace_id))
     return res.items
 
 
 @mcp.tool(description="retrieve bot")
-async def retrieve_bot(bot_id: int | str) -> Bot:
+async def retrieve_bot(bot_id: Union[int, str]) -> Bot:
     return await server.coze.bots.retrieve(bot_id=str(bot_id))
 
 
 @mcp.tool(description="create bot in workspaces")
 async def create_bot(
-    workspace_id: int | str,
+    workspace_id: Union[int, str],
     name: str,
-    description: str | None = None,
-    prompt: str | None = None,
+    description: Optional[str] = None,
+    prompt: Optional[str] = None,
 ) -> Bot:
     return await server.coze.bots.create(
         space_id=str(workspace_id),
@@ -118,10 +118,10 @@ async def create_bot(
 
 @mcp.tool(description="update bot info")
 async def update_bot(
-    bot_id: int | str,
-    name: str | None = None,
-    description: str | None = None,
-    prompt: str | None = None,
+    bot_id: Union[int, str],
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    prompt: Optional[str] = None,
 ):
     await server.coze.bots.update(
         bot_id=str(bot_id),
@@ -132,7 +132,7 @@ async def update_bot(
 
 
 @mcp.tool(description="publish bot info")
-async def publish_bot(bot_id: int | str) -> Bot:
+async def publish_bot(bot_id: Union[int, str]) -> Bot:
     return await server.coze.bots.publish(
         bot_id=str(bot_id),
     )
@@ -140,7 +140,7 @@ async def publish_bot(bot_id: int | str) -> Bot:
 
 @mcp.tool(description="chat with bot")
 async def chat_with_bot(
-    bot_id: int | str,
+    bot_id: Union[int, str],
     content: str,
 ) -> str:
     return await server.bot_chat(
@@ -151,8 +151,8 @@ async def chat_with_bot(
 
 @mcp.tool(description="chat with bot")
 async def chat_with_workflow(
-    bot_id: int | str,
-    workflow_id: int | str,
+    bot_id: Union[int, str],
+    workflow_id: Union[int, str],
     content: str,
 ) -> str:
     return await server.workflow_chat(
