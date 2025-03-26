@@ -121,7 +121,7 @@ Docker build:
 
 ```bash
 cd src/coze_mcp_server
-docker build -t coze_mcp_server .
+docker build -t ghcr.io/coze-dev/coze-mcp-server .
 ```
 
 ## License
