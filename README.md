@@ -7,7 +7,6 @@ A Model Context Protocol server that provides coze resource and tool.
 - `list_workspaces` - Get workspaces list
 - `list_bots` - Get bots list
 - `create_bot` - Create bot
-
 - `get_me`: Get self user info
 - `list_workspaces`: List workspaces
 - `list_bots`: List bots
@@ -66,7 +65,7 @@ Add to your Claude settings:
 "mcpServers": {
   "coze-mcp-server": {
     "command": "docker",
-    "args": ["run", "-i", "--rm", "coze-mcp-server"]
+    "args": ["run", "-i", "--rm", "ghcr.io/coze-dev/coze-mcp-server"]
   }
 }
 ```
@@ -114,15 +113,6 @@ Add to your Zed settings.json:
 },
 ```
 </details>
-
-## Build
-
-Docker build:
-
-```bash
-cd src/coze_mcp_server
-docker build -t coze_mcp_server .
-```
 
 ## License
 
