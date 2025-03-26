@@ -12,6 +12,7 @@ from cozepy import (  # type: ignore
     ChatEventType,
     Voice,
     User,
+    Workspace,
 )
 from mcp.server import FastMCP  # type: ignore
 from pydantic import BaseModel  # type: ignore
@@ -79,52 +80,76 @@ conf = Config.build()
 server = CozeServer(conf.api_base, conf.api_token)
 
 
+def wrap_id(model: Union[BaseModel, List[BaseModel]], field: str = "id"):
+    if isinstance(model, list):
+        res = []
+        for item in model:
+            v = item.model_dump()
+            v[field] = "id:" + v[field]
+            res.append(v)
+        return res
+
+    v = model.model_dump()
+    v[field] = "id:" + v[field]
+    return v
+
+
+def unwrap_id(value: str) -> str:
+    if value and value.startswith("id:"):
+        return str(value[3:])
+    return str(value)
+
+
 @mcp.tool(description="get self user info")
 async def get_me() -> User:
     return await server.coze.users.me()
 
 
 @mcp.tool(description="list coze workspaces")
-async def list_workspaces():
+async def list_workspaces() -> List[Workspace]:
     res = await server.coze.workspaces.list()
-    return [item async for item in res]
+    items = [item async for item in res]
+    return wrap_id(items)  # type: ignore
 
 
 @mcp.tool(description="list bots in workspaces")
-async def list_bots(workspace_id: Union[int, str]):
-    res = await server.coze.bots.list(space_id=str(workspace_id))
-    return res.items
+async def list_bots(workspace_id: str) -> List[Bot]:
+    res = await server.coze.bots.list(space_id=unwrap_id(workspace_id))
+    items = [item async for item in res]
+    return wrap_id(items, "bot_id")  # type: ignore
 
 
 @mcp.tool(description="retrieve bot")
-async def retrieve_bot(bot_id: Union[int, str]) -> Bot:
-    return await server.coze.bots.retrieve(bot_id=str(bot_id))
+async def retrieve_bot(bot_id: str) -> Bot:
+    bot = await server.coze.bots.retrieve(bot_id=unwrap_id(bot_id))
+    return wrap_id(bot, "bot_id")  # type: ignore
 
 
 @mcp.tool(description="create bot in workspaces")
 async def create_bot(
-    workspace_id: Union[int, str],
+    workspace_id: str,
     name: str,
     description: Optional[str] = None,
     prompt: Optional[str] = None,
 ) -> Bot:
-    return await server.coze.bots.create(
-        space_id=str(workspace_id),
+    bot = await server.coze.bots.create(
+        space_id=unwrap_id(workspace_id),
         name=name,
         description=description,
         prompt_info=None if not prompt else BotPromptInfo(prompt=prompt),
     )
+    return wrap_id(bot, "bot_id")  # type: ignore
 
 
 @mcp.tool(description="update bot info")
 async def update_bot(
-    bot_id: Union[int, str],
+    bot_id: str,
     name: Optional[str] = None,
     description: Optional[str] = None,
     prompt: Optional[str] = None,
 ):
     await server.coze.bots.update(
-        bot_id=str(bot_id),
+        bot_id=unwrap_id(bot_id),
         name=name,
         description=description,
         prompt_info=None if not prompt else BotPromptInfo(prompt=prompt),
@@ -132,32 +157,33 @@ async def update_bot(
 
 
 @mcp.tool(description="publish bot info")
-async def publish_bot(bot_id: Union[int, str]) -> Bot:
-    return await server.coze.bots.publish(
-        bot_id=str(bot_id),
+async def publish_bot(bot_id: str) -> Bot:
+    bot = await server.coze.bots.publish(
+        bot_id=unwrap_id(bot_id),
     )
+    return wrap_id(bot, "bot_id")  # type: ignore
 
 
 @mcp.tool(description="chat with bot")
 async def chat_with_bot(
-    bot_id: Union[int, str],
+    bot_id: str,
     content: str,
 ) -> str:
     return await server.bot_chat(
-        bot_id=str(bot_id),
+        bot_id=unwrap_id(bot_id),
         content=content,
     )
 
 
 @mcp.tool(description="chat with bot")
 async def chat_with_workflow(
-    bot_id: Union[int, str],
-    workflow_id: Union[int, str],
+    bot_id: str,
+    workflow_id: str,
     content: str,
 ) -> str:
     return await server.workflow_chat(
-        bot_id=str(bot_id),
-        workflow_id=str(workflow_id),
+        bot_id=unwrap_id(bot_id),
+        workflow_id=unwrap_id(workflow_id),
         content=content,
     )
 
@@ -166,4 +192,4 @@ async def chat_with_workflow(
 async def list_voices() -> List[Voice]:
     res = await server.coze.audio.voices.list()
     items = [item async for item in res]
-    return items
+    return wrap_id(items, "voice_id")  # type: ignore
