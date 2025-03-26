@@ -1,12 +1,12 @@
 [project]
 name = "coze-mcp-server"
-version = "0.0.1"
+version = "0.0.2"
 description = "MCP Server for Coze(coze.com/coze.cn)"
 authors = [
     { name = "chyroc", email = "chyroc@bytedance.com" },
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4.0"
 keywords = ["coze", "mcp", "llm"]
 license = { text = "MIT" }
 dependencies = [
